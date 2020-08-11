@@ -26,7 +26,6 @@ import json
 import subprocess
 import zipfile
 import re
-import time
 import argparse
 
 # CONSTANTS
@@ -71,6 +70,7 @@ args = parser.parse_args()
 
 FORCE_CUSTOM = args.custom
 FORCE_CONFIRMS = args.force
+
 
 # ------------------
 # Useful utilities
@@ -119,7 +119,6 @@ def get_python_version(venv_path):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
-    last_state = None
     while True:
         output_line_stderr = process.stderr.readline().decode('utf-8')
         poll = process.poll()
@@ -129,6 +128,7 @@ def get_python_version(venv_path):
             output.append(output_line_stderr)
 
     return output, poll
+
 
 def bail(msg):
     print_c(msg, TextColors.RED)
@@ -166,7 +166,8 @@ def start_text():
 
 
 def get_sys_info():
-    """Finds out whether the underlying OS is compatible with this script
+    """
+    Finds out whether the underlying OS is compatible with this script
 
     Returns:
         2 tuple: platform valid, octopi valid
@@ -315,6 +316,7 @@ def check_venv_python(venv_path):
         match = re.search(r"^Python (?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$", line.rstrip())
         if match:
             major, minor, patch = match.group('major'), match.group('minor'), match.group('patch')
+            print("Python version {}.{}.{}".format(major, minor, patch))
             if int(major) == 2:
                 return True
             elif int(major) == 3:
@@ -323,7 +325,8 @@ def check_venv_python(venv_path):
 
 
 def create_backup(venv_path, config_path):
-    """Create OctoPrint backup and return the path to it
+    """
+    Create OctoPrint backup and return the path to it
 
     Args:
         venv_path (str): path to virtual environment
@@ -503,7 +506,6 @@ def install_plugins(venv_path, plugin_keys, backup_path):
             if plugin['id'] == 'bedlevelvisualizer':
                 print_c("Warning: You have installed Bed Level visualiser. There is a known issue with it failing silently on Python 3", TextColors.YELLOW)
                 print_c("See more here: https://github.com/jneilliii/OctoPrint-BedLevelVisualizer/issues/213")
-
 
     if len(plugin_errors):
         print_c("Failed to install these plugins:", TextColors.YELLOW)
