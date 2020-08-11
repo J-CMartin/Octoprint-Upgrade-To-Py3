@@ -59,13 +59,11 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '-c', '--custom',
     action="store_true",
-    help="Overrides OctoPi check, allows specifying custom env config",
-    )
+    help="Overrides OctoPi check, allows specifying custom env config")
 parser.add_argument(
     '-f', '--force',
     action="store_true",
-    help="Forces through any checks of confirm-to-go"
-)
+    help="Forces through any checks of confirm-to-go")
 args = parser.parse_args()
 
 FORCE_CUSTOM = args.custom
