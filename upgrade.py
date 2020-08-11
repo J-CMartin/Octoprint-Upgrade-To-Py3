@@ -242,24 +242,8 @@ def get_env_config(octopi):
             print_c("If you'd rather upgrade a different virtual env, you can enter the full path here", TextColors.YELLOW)
             venv_path = None
 
-        while not venv_path:
-            try:
-                path = input("Path: ")
-            except KeyboardInterrupt:
-                bail("Bye!")
-            if os.path.isfile("{}/bin/python".format(path)):
-                valid = check_venv_python(path)
-                if valid:
-                    venv_path = path
-                    print_c("Path valid", TextColors.GREEN)
-                else:
-                    print_c("Virtual environment is already Python 3, are you sure you need an upgrade?\n"
-                            "Please try again", TextColors.YELLOW)
-            else:
-                print_c("Invalid venv path, please try again", TextColors.YELLOW)
-            if path.endswith('/'):
-                print_c("Please enter your path without a trailing slash", TextColors.YELLOW)
-                venv_path = None
+        if not venv_path:
+            venv_path = get_venv_name()
 
         sys_commands['stop'] = "sudo service octoprint stop"
         sys_commands['start'] = "sudo service octoprint start"
@@ -267,24 +251,9 @@ def get_env_config(octopi):
     else:
         print("Please provide the path to your virtual environment and the config directory of OctoPrint")
         print("On OctoPi, this would be /home/pi/oprint and commands 'sudo service octoprint stop/start'")
-        while not venv_path:
-            try:
-                path = input("Path: ")
-            except KeyboardInterrupt:
-                bail("Bye!")
-            if os.path.isfile("{}/bin/python".format(path)):
-                valid = check_venv_python(path)
-                if valid:
-                    venv_path = path
-                    print_c("Path valid", TextColors.GREEN)
-                else:
-                    print_c("Virtual environment is already Python 3, are you sure you need an upgrade?\n"
-                            "Please try again", TextColors.YELLOW)
-            else:
-                print_c("Invalid venv path, please try again", TextColors.YELLOW)
-            if path.endswith('/'):
-                print_c("Please enter your path without a trailing slash", TextColors.YELLOW)
-                venv_path = None
+
+        if not venv_path:
+            venv_path = get_venv_name()
 
         while not config_base:
             try:
@@ -306,6 +275,28 @@ def get_env_config(octopi):
             bail("Bye!")
 
     return venv_path, sys_commands, config_base
+
+
+def get_venv_name():
+    venv_path = None
+    while not venv_path:
+        try:
+            path = input("Path: ")
+        except KeyboardInterrupt:
+            bail("Bye!")
+        if os.path.isfile("{}/bin/python".format(path)):
+            valid = check_venv_python(path)
+            if valid:
+                venv_path = path
+                print_c("Path valid", TextColors.GREEN)
+            else:
+                print_c("Virtual environment is already Python 3, are you sure you need an upgrade?\n"
+                        "Please try again", TextColors.YELLOW)
+        else:
+            print_c("Invalid venv path, please try again", TextColors.YELLOW)
+        if path.endswith('/'):
+            print_c("Please enter your path without a trailing slash", TextColors.YELLOW)
+            venv_path = None
 
 
 def check_venv_python(venv_path):
